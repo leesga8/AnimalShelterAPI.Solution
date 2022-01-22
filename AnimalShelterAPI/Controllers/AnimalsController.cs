@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AnimalShelterAPI.Models;
+using System;
+using System.Linq;
 
 namespace AnimalShelterAPI.Controllers
 {
@@ -16,7 +18,7 @@ namespace AnimalShelterAPI.Controllers
     {
       _db = db;
     }
-    
+
     // GET api/animals
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Animal>>> Get()
@@ -46,6 +48,40 @@ namespace AnimalShelterAPI.Controllers
       }
 
       return animal;
+    }
+
+    // PUT: api/Animals/5
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, Animal animal)
+    {
+      if (id != animal.AnimalId)
+      {
+        return BadRequest();
+      }
+
+      _db.Entry(animal).State = EntityState.Modified;
+
+      try
+      {
+        await _db.SaveChangesAsync();
+      }
+      catch (DbUpdateConcurrencyException)
+      {
+        if (!AnimalExists(id))
+        {
+          return NotFound();
+        }
+        else
+        {
+          throw;
+        }
+      }
+
+      return NoContent();
+    }
+    private bool AnimalExists(int id)
+    {
+      return _db.Animals.Any(e => e.AnimalId == id);
     }
   }
 }
