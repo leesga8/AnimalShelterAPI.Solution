@@ -16,6 +16,7 @@ namespace AnimalShelterAPI.Controllers
     {
       _db = db;
     }
+    
     // GET api/animals
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Animal>>> Get()
@@ -32,6 +33,7 @@ namespace AnimalShelterAPI.Controllers
 
       return CreatedAtAction(nameof(GetAnimal), new { id = animal.AnimalId }, animal);
     }
+
     // GET: api/Animals/5
     [HttpGet("{id}")]
     public async Task<ActionResult<Animal>> GetAnimal(int id)
