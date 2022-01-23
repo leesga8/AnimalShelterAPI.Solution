@@ -21,7 +21,7 @@ namespace AnimalShelterAPI.Controllers
 
     // GET api/animals
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Animal>>> Get(string species)
+    public async Task<ActionResult<IEnumerable<Animal>>> Get(string species, string gender, string name)
     {
       var query = _db.Animals.AsQueryable();
 
@@ -29,6 +29,16 @@ namespace AnimalShelterAPI.Controllers
       {
         query = query.Where(entry => entry.Species == species);
       }
+
+      if (gender != null)
+      {
+        query = query.Where(entry => entry.Gender == gender);
+      }
+      if (name != null)
+      {
+        query = query.Where(entry => entry.Name == name);
+      }
+
 
       return await query.ToListAsync();
     }
@@ -86,7 +96,7 @@ namespace AnimalShelterAPI.Controllers
 
       return NoContent();
     }
-        // DELETE: api/Animals/5
+    // DELETE: api/Animals/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAnimal(int id)
     {
