@@ -4,7 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using AnimalShelterAPI.Models;
+using System;
 
 namespace AnimalShelterAPI
 {
@@ -23,10 +25,27 @@ namespace AnimalShelterAPI
       services.AddDbContext<AnimalShelterAPIContext>(opt =>
             opt.UseMySql(Configuration["ConnectionStrings:DefaultConnection"], ServerVersion.AutoDetect(Configuration["ConnectionStrings:DefaultConnection"])));
       services.AddControllers();
-      // services.AddSwaggerGen(c =>
-      // {
-      //     c.SwaggerDoc("v1", new OpenApiInfo { Title = "AnimalShelterAPI", Version = "v1" });
-      // });
+      
+           services.AddSwaggerGen(options =>
+      {
+        options.SwaggerDoc("v1", new OpenApiInfo
+        {
+          Version = "v1",
+          Title = "AnimalShelterAPI",
+          Description = "An ASP.NET Core Web API for managing Animal in a Shelter",
+          TermsOfService = new Uri("https://example.com/terms"),
+          Contact = new OpenApiContact
+          {
+            Name = "Albert",
+            Url = new Uri("https://example.com/contact")
+          },
+          License = new OpenApiLicense
+          {
+            Name = "new OpenAPILicense",
+            Url = new Uri("https://example.com/license")
+          }
+        });
+      });
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -35,8 +54,12 @@ namespace AnimalShelterAPI
       if (env.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();
-        // app.UseSwagger();
-        // app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "AnimalShelterAPI v1"));
+        app.UseSwagger();
+        app.UseSwaggerUI(options =>
+        {
+          options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+          options.RoutePrefix = string.Empty;
+        });
       }
 
       // app.UseHttpsRedirection();
